@@ -1,5 +1,26 @@
+/**
+ * Client Model
+ * Defines client schema for mortgage applicants
+ * 
+ * @author Juan Carlos Angulo
+ * @module models/Client
+ */
+
 import mongoose from 'mongoose';
 
+/**
+ * Client Schema
+ * @typedef {Object} ClientSchema
+ * @property {string} dni - National ID number (unique)
+ * @property {ObjectId} user - Reference to User who created this client
+ * @property {string} nombres - First name(s)
+ * @property {string} apellidos - Last name(s)
+ * @property {Object} perfil_socioeconomico - Socioeconomic profile
+ * @property {Decimal128} perfil_socioeconomico.ingresos - Monthly income
+ * @property {number} perfil_socioeconomico.carga_familiar - Number of dependents
+ * @property {Date} createdAt - Creation timestamp
+ * @property {Date} updatedAt - Last update timestamp
+ */
 const clientSchema = mongoose.Schema({
     dni: {
         type: String,

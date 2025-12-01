@@ -1,10 +1,27 @@
+/**
+ * Dashboard Controller
+ * Provides aggregated statistics and metrics for dashboard view
+ * 
+ * @author Juan Carlos Angulo
+ * @module controllers/dashboard.controller
+ */
+
 import Client from '../models/Client.js';
 import Property from '../models/Property.js';
 import Simulation from '../models/Simulation.js';
 
-// @desc    Get dashboard statistics
-// @route   GET /api/dashboard/stats
-// @access  Private
+/**
+ * Get dashboard statistics including counts and recent activity
+ * 
+ * @async
+ * @function getDashboardStats
+ * @param {Object} req - Express request object
+ * @param {Object} req.user - Authenticated user object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} Returns statistics object with totals, recent simulations, and chart data
+ * 
+ * @description GET /api/dashboard/stats (Private)
+ */
 export const getDashboardStats = async (req, res) => {
     try {
         const totalClients = await Client.countDocuments({ user: req.user._id });

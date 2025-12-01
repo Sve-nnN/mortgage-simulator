@@ -1,8 +1,25 @@
+/**
+ * Property Controller
+ * Handles CRUD operations for property management
+ * 
+ * @author Juan Carlos Angulo
+ * @module controllers/property.controller
+ */
+
 import Property from '../models/Property.js';
 
-// @desc    Get all properties
-// @route   GET /api/properties
-// @access  Private
+/**
+ * Get all properties for authenticated user
+ * 
+ * @async
+ * @function getProperties
+ * @param {Object} req - Express request object
+ * @param {Object} req.user - Authenticated user object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ * 
+ * @description GET /api/properties (Private)
+ */
 export const getProperties = async (req, res) => {
     try {
         const properties = await Property.find({ user: req.user._id });
@@ -12,9 +29,24 @@ export const getProperties = async (req, res) => {
     }
 };
 
-// @desc    Create a property
-// @route   POST /api/properties
-// @access  Private
+/**
+ * Create a new property listing
+ * 
+ * @async
+ * @function createProperty
+ * @param {Object} req - Express request object
+ * @param {Object} req.body - Request body
+ * @param {string} req.body.codigo - Property code
+ * @param {string} req.body.direccion - Property address
+ * @param {number} req.body.valor_venta - Sale price
+ * @param {string} req.body.estado - Property status
+ * @param {string} req.body.moneda - Currency
+ * @param {Object} req.user - Authenticated user object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ * 
+ * @description POST /api/properties (Private)
+ */
 export const createProperty = async (req, res) => {
     const { codigo, direccion, valor_venta, estado, moneda } = req.body;
 
@@ -35,9 +67,20 @@ export const createProperty = async (req, res) => {
     }
 };
 
-// @desc    Update property
-// @route   PUT /api/properties/:id
-// @access  Private
+/**
+ * Update existing property information
+ * 
+ * @async
+ * @function updateProperty
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - URL parameters
+ * @param {string} req.params.id - Property ID
+ * @param {Object} req.body - Updated property data
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ * 
+ * @description PUT /api/properties/:id (Private)
+ */
 export const updateProperty = async (req, res) => {
     try {
         const property = await Property.findById(req.params.id);
@@ -56,9 +99,19 @@ export const updateProperty = async (req, res) => {
     }
 };
 
-// @desc    Delete property
-// @route   DELETE /api/properties/:id
-// @access  Private
+/**
+ * Delete a property from database
+ * 
+ * @async
+ * @function deleteProperty
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - URL parameters
+ * @param {string} req.params.id - Property ID
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ * 
+ * @description DELETE /api/properties/:id (Private)
+ */
 export const deleteProperty = async (req, res) => {
     try {
         const property = await Property.findById(req.params.id);

@@ -32,8 +32,20 @@ const Simulator = () => {
         tipo_gracia: 'Sin Gracia',
         periodo_gracia_meses: 0,
         bono_buen_pagador: false,
+        bono_buen_pagador_meses: 12,
+        bono_buen_pagador_percent: 0.5,
         seguro_desgravamen_percent: 0.05,
         seguro_riesgo_percent: 0.03,
+        cok_percent: 10,
+        costos_adicionales: [],
+    });
+
+    const [showCostForm, setShowCostForm] = useState(false);
+    const [newCost, setNewCost] = useState({
+        nombre: '',
+        tipo: 'fijo',
+        valor: '',
+        base: 'monto_prestamo',
     });
 
     const [results, setResults] = useState(null);
@@ -108,7 +120,12 @@ const Simulator = () => {
 
     const handleCalculate = async () => {
         try {
-            const { data } = await api.post('/simulate/calculate', params);
+            const property = properties.find(p => p._id === selectedProperty);
+            const payload = {
+                ...params,
+                valor_propiedad: property?.valor_venta?.$numberDecimal || params.monto_prestamo,
+            };
+            const { data } = await api.post('/simulate/calculate', payload);
             setResults(data);
             setStep(3);
         } catch (error) {
@@ -141,6 +158,10 @@ const Simulator = () => {
                     tipo_gracia: params.tipo_gracia,
                     periodo_gracia_meses: params.periodo_gracia_meses,
                     bono_buen_pagador: params.bono_buen_pagador,
+                    bono_buen_pagador_meses: params.bono_buen_pagador_meses,
+                    bono_buen_pagador_percent: params.bono_buen_pagador_percent,
+                    cok_percent: params.cok_percent,
+                    costos_adicionales: params.costos_adicionales,
                 },
                 output_summary: results.indicators,
                 cronograma: results.schedule,
@@ -347,7 +368,186 @@ const Simulator = () => {
                                     />
                                 </div>
                             )}
+                            <div className="space-y-2">
+                                <Label htmlFor="cok-input" className="flex items-center gap-2">
+                                    COK - Costo de Oportunidad (%)
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger><Info className="h-4 w-4 text-gray-400" /></TooltipTrigger>
+                                            <TooltipContent><p>Tasa anual de descuento para calcular el VAN</p></TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </Label>
+                                <Input
+                                    id="cok-input"
+                                    type="number"
+                                    step="0.01"
+                                    value={params.cok_percent}
+                                    onChange={(e) => setParams({ ...params, cok_percent: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-2 col-span-2">
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        id="bono-check"
+                                        checked={params.bono_buen_pagador}
+                                        onChange={(e) => setParams({ ...params, bono_buen_pagador: e.target.checked })}
+                                        className="h-4 w-4"
+                                    />
+                                    <Label htmlFor="bono-check" className="flex items-center gap-2">
+                                        Bono del Buen Pagador
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger><Info className="h-4 w-4 text-gray-400" /></TooltipTrigger>
+                                                <TooltipContent><p>Descuento por pago puntual en los primeros meses</p></TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </Label>
+                                </div>
+                            </div>
+                            {params.bono_buen_pagador && (
+                                <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="bono-meses">Meses de aplicacion</Label>
+                                        <Input
+                                            id="bono-meses"
+                                            type="number"
+                                            value={params.bono_buen_pagador_meses}
+                                            onChange={(e) => setParams({ ...params, bono_buen_pagador_meses: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="bono-percent">Descuento (%)</Label>
+                                        <Input
+                                            id="bono-percent"
+                                            type="number"
+                                            step="0.01"
+                                            value={params.bono_buen_pagador_percent}
+                                            onChange={(e) => setParams({ ...params, bono_buen_pagador_percent: e.target.value })}
+                                        />
+                                    </div>
+                                </>
+                            )}
                         </div>
+
+                        {/* Additional Costs Section */}
+                        <div className="border-t pt-4 mt-4">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold">Costos Adicionales</h3>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setShowCostForm(!showCostForm)}
+                                >
+                                    {showCostForm ? 'Cancelar' : '+ Agregar Costo'}
+                                </Button>
+                            </div>
+
+                            {showCostForm && (
+                                <Card className="mb-4 bg-gray-50">
+                                    <CardContent className="pt-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cost-name">Nombre del Costo</Label>
+                                                <Input
+                                                    id="cost-name"
+                                                    value={newCost.nombre}
+                                                    onChange={(e) => setNewCost({ ...newCost, nombre: e.target.value })}
+                                                    placeholder="Ej: Gastos notariales"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cost-type">Tipo</Label>
+                                                <select
+                                                    id="cost-type"
+                                                    value={newCost.tipo}
+                                                    onChange={(e) => setNewCost({ ...newCost, tipo: e.target.value })}
+                                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                                >
+                                                    <option value="fijo">Monto Fijo</option>
+                                                    <option value="porcentaje">Porcentaje</option>
+                                                </select>
+                                            </div>
+                                            {newCost.tipo === 'porcentaje' && (
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="cost-base">Base de Calculo</Label>
+                                                    <select
+                                                        id="cost-base"
+                                                        value={newCost.base}
+                                                        onChange={(e) => setNewCost({ ...newCost, base: e.target.value })}
+                                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                                    >
+                                                        <option value="monto_prestamo">Monto del Prestamo</option>
+                                                        <option value="valor_propiedad">Valor de la Propiedad</option>
+                                                    </select>
+                                                </div>
+                                            )}
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cost-value">
+                                                    {newCost.tipo === 'fijo' ? `Monto (${currencySymbol})` : 'Porcentaje (%)'}
+                                                </Label>
+                                                <Input
+                                                    id="cost-value"
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={newCost.valor}
+                                                    onChange={(e) => setNewCost({ ...newCost, valor: e.target.value })}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-end mt-4">
+                                            <Button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (newCost.nombre && newCost.valor) {
+                                                        setParams({
+                                                            ...params,
+                                                            costos_adicionales: [...params.costos_adicionales, { ...newCost }]
+                                                        });
+                                                        setNewCost({ nombre: '', tipo: 'fijo', valor: '', base: 'monto_prestamo' });
+                                                        setShowCostForm(false);
+                                                    }
+                                                }}
+                                            >
+                                                Agregar
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {params.costos_adicionales.length > 0 && (
+                                <div className="space-y-2">
+                                    {params.costos_adicionales.map((costo, index) => (
+                                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                            <div>
+                                                <span className="font-medium">{costo.nombre}</span>
+                                                <span className="text-sm text-gray-600 ml-2">
+                                                    {costo.tipo === 'fijo'
+                                                        ? `${currencySymbol} ${costo.valor}`
+                                                        : `${costo.valor}% de ${costo.base === 'monto_prestamo' ? 'Prestamo' : 'Propiedad'}`
+                                                    }
+                                                </span>
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    const newCostos = params.costos_adicionales.filter((_, i) => i !== index);
+                                                    setParams({ ...params, costos_adicionales: newCostos });
+                                                }}
+                                            >
+                                                Eliminar
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         <div className="flex justify-between pt-4">
                             <Button variant="outline" onClick={() => setStep(1)}>
                                 {t('simulator.back')}
@@ -364,7 +564,7 @@ const Simulator = () => {
             {step === 3 && results && (
                 <div className="space-y-6">
                     {/* Indicators */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <Card className="border-l-4 border-l-blue-500">
                             <CardContent className="pt-6">
                                 <h4 className="text-gray-500 text-sm">{t('simulator.tem')}</h4>
@@ -383,7 +583,38 @@ const Simulator = () => {
                                 <p className="text-2xl font-bold">{results.indicators.tir}%</p>
                             </CardContent>
                         </Card>
+                        <Card className="border-l-4 border-l-orange-500">
+                            <CardContent className="pt-6">
+                                <h4 className="text-gray-500 text-sm">VAN</h4>
+                                <p className="text-2xl font-bold">{currencySymbol} {parseFloat(results.indicators.van).toFixed(2)}</p>
+                            </CardContent>
+                        </Card>
                     </div>
+
+                    {/* Initial Costs Summary */}
+                    {results.costos_iniciales_total && parseFloat(results.costos_iniciales_total) > 0 && (
+                        <Card className="bg-yellow-50 border-yellow-200">
+                            <CardContent className="pt-6">
+                                <h4 className="text-lg font-semibold mb-2">Costos Iniciales</h4>
+                                <p className="text-2xl font-bold text-yellow-800">
+                                    {currencySymbol} {parseFloat(results.costos_iniciales_total).toFixed(2)}
+                                </p>
+                                {params.costos_adicionales.length > 0 && (
+                                    <div className="mt-4 space-y-1">
+                                        {params.costos_adicionales.map((costo, idx) => (
+                                            <div key={idx} className="text-sm text-gray-700">
+                                                <span className="font-medium">{costo.nombre}:</span>{' '}
+                                                {costo.tipo === 'fijo'
+                                                    ? `${currencySymbol} ${costo.valor}`
+                                                    : `${costo.valor}% de ${costo.base === 'monto_prestamo' ? 'Prestamo' : 'Propiedad'}`
+                                                }
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    )}
 
                     {/* Schedule Table */}
                     <Card>
@@ -404,6 +635,7 @@ const Simulator = () => {
                                             <th className="px-4 py-3">{t('simulator.interest')}</th>
                                             <th className="px-4 py-3">{t('simulator.amortization')}</th>
                                             <th className="px-4 py-3">{t('simulator.insurance')}</th>
+                                            {params.bono_buen_pagador && <th className="px-4 py-3">Bono</th>}
                                             <th className="px-4 py-3">{t('simulator.total_payment')}</th>
                                             <th className="px-4 py-3">{t('simulator.balance')}</th>
                                         </tr>
@@ -421,6 +653,14 @@ const Simulator = () => {
                                                         parseFloat(row.seguro_riesgo)
                                                     ).toFixed(2)}
                                                 </td>
+                                                {params.bono_buen_pagador && (
+                                                    <td className="px-4 py-2 text-green-600">
+                                                        {row.bono_buen_pagador && parseFloat(row.bono_buen_pagador) > 0
+                                                            ? `-${currencySymbol} ${parseFloat(row.bono_buen_pagador).toFixed(2)}`
+                                                            : '-'
+                                                        }
+                                                    </td>
+                                                )}
                                                 <td className="px-4 py-2 font-bold">{currencySymbol} {parseFloat(row.cuota_total).toFixed(2)}</td>
                                                 <td className="px-4 py-2">{currencySymbol} {parseFloat(row.saldo_final).toFixed(2)}</td>
                                             </tr>

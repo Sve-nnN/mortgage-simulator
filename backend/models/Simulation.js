@@ -1,5 +1,25 @@
+/**
+ * Simulation Model
+ * Stores complete mortgage simulation data including inputs, schedule, and results
+ * 
+ * @author Juan Carlos Angulo
+ * @module models/Simulation
+ */
+
 import mongoose from 'mongoose';
 
+/**
+ * Simulation Schema
+ * @typedef {Object} SimulationSchema
+ * @property {ObjectId} user_id - Reference to User who created simulation
+ * @property {ObjectId} client_id - Reference to Client
+ * @property {Object} property_snapshot - Property details at simulation time
+ * @property {Object} input_data - Simulation input parameters
+ * @property {Object} output_summary - Calculated financial indicators
+ * @property {Array<Object>} cronograma - Payment schedule
+ * @property {Date} createdAt - Creation timestamp
+ * @property {Date} updatedAt - Last update timestamp
+ */
 const simulationSchema = mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -42,6 +62,30 @@ const simulationSchema = mongoose.Schema({
             type: Boolean,
             default: false,
         },
+        bono_buen_pagador_meses: {
+            type: Number,
+            default: 12,
+        },
+        bono_buen_pagador_percent: {
+            type: mongoose.Schema.Types.Decimal128,
+            default: 0.5,
+        },
+        cok_percent: {
+            type: mongoose.Schema.Types.Decimal128,
+            default: 10,
+        },
+        costos_adicionales: [{
+            nombre: String,
+            tipo: {
+                type: String,
+                enum: ['fijo', 'porcentaje'],
+            },
+            valor: mongoose.Schema.Types.Decimal128,
+            base: {
+                type: String,
+                enum: ['monto_prestamo', 'valor_propiedad'],
+            },
+        }],
     },
     output_summary: {
         van: mongoose.Schema.Types.Decimal128,
@@ -57,6 +101,7 @@ const simulationSchema = mongoose.Schema({
         saldo_final: mongoose.Schema.Types.Decimal128,
         seguro_desgravamen: mongoose.Schema.Types.Decimal128,
         seguro_riesgo: mongoose.Schema.Types.Decimal128,
+        bono_buen_pagador: mongoose.Schema.Types.Decimal128,
     }],
 }, {
     timestamps: true,

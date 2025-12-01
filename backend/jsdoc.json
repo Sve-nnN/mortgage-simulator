@@ -1,0 +1,23 @@
+{
+  "source": {
+    "include": ["./"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(node_modules/|tests/|coverage/)"
+  },
+  "opts": {
+    "destination": "./docs",
+    "recurse": true,
+    "readme": "../README.md"
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "metadata": {
+    "title": "Mortgage Simulator API Documentation",
+    "description": "Complete API documentation for the Mortgage Simulator backend application",
+    "version": "1.0.0",
+    "author": "Juan Carlos Angulo"
+  }
+}

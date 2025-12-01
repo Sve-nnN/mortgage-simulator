@@ -1,15 +1,41 @@
+/**
+ * Authentication Controller
+ * Handles user authentication and registration
+ * 
+ * @author Juan Carlos Angulo
+ * @module controllers/auth.controller
+ */
+
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
+/**
+ * Generate JWT token for authenticated user
+ * 
+ * @private
+ * @param {string} id - User ID
+ * @returns {string} JWT token
+ */
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: '30d',
     });
 };
 
-// @desc    Auth user & get token
-// @route   POST /api/auth/login
-// @access  Public
+/**
+ * Authenticate user and return JWT token
+ * 
+ * @async
+ * @function authUser
+ * @param {Object} req - Express request object
+ * @param {Object} req.body - Request body
+ * @param {string} req.body.username - Username
+ * @param {string} req.body.password - Password
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ * 
+ * @description POST /api/auth/login (Public)
+ */
 export const authUser = async (req, res) => {
     const { username, password } = req.body;
 
@@ -27,9 +53,20 @@ export const authUser = async (req, res) => {
     }
 };
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
+/**
+ * Register a new user account
+ * 
+ * @async
+ * @function registerUser
+ * @param {Object} req - Express request object
+ * @param {Object} req.body - Request body
+ * @param {string} req.body.username - Desired username
+ * @param {string} req.body.password - Password
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ * 
+ * @description POST /api/auth/register (Public)
+ */
 export const registerUser = async (req, res) => {
     const { username, password } = req.body;
 

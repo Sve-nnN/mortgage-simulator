@@ -1,6 +1,23 @@
+/**
+ * User Model
+ * Defines user schema and authentication methods
+ * 
+ * @author Juan Carlos Angulo
+ * @module models/User
+ */
+
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+/**
+ * User Schema
+ * @typedef {Object} UserSchema
+ * @property {string} username - Unique username
+ * @property {string} password - Hashed password
+ * @property {string} role - User role (default: 'user')
+ * @property {Date} createdAt - Creation timestamp
+ * @property {Date} updatedAt - Last update timestamp
+ */
 const userSchema = mongoose.Schema({
     username: {
         type: String,
@@ -19,6 +36,12 @@ const userSchema = mongoose.Schema({
     timestamps: true,
 });
 
+/**
+ * Compare entered password with hashed password
+ * @method matchPassword
+ * @param {string} enteredPassword - Plain text password to verify
+ * @returns {Promise<boolean>} True if passwords match
+ */
 userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
