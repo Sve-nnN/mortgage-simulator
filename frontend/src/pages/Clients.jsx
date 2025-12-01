@@ -242,7 +242,7 @@ const Clients = () => {
                                     </Button>
                                 </td>
                             </tr>
-                        )))}
+                        ))}
                     </tbody>
                 </table>
             </div>

@@ -19,7 +19,7 @@ const Properties = () => {
         direccion: '',
         valor_venta: '',
         moneda: 'PEN',
-        estado: 'Disponible',
+        estado: 'Planos',
     });
     const { t } = useTranslation();
 
@@ -52,7 +52,7 @@ const Properties = () => {
 
             setShowForm(false);
             setEditingId(null);
-            setFormData({ codigo: '', direccion: '', valor_venta: '', moneda: 'PEN', estado: 'Disponible' });
+            setFormData({ codigo: '', direccion: '', valor_venta: '', moneda: 'PEN', estado: 'Planos' });
             fetchProperties();
         } catch (error) {
             console.error(error);
@@ -92,7 +92,7 @@ const Properties = () => {
                 <Button onClick={() => {
                     setShowForm(!showForm);
                     setEditingId(null);
-                    setFormData({ codigo: '', direccion: '', valor_venta: '', moneda: 'PEN', estado: 'Disponible' });
+                    setFormData({ codigo: '', direccion: '', valor_venta: '', moneda: 'PEN', estado: 'Planos' });
                 }}>
                     <Plus className="mr-2 h-4 w-4" /> {t('properties.add_property')}
                 </Button>
@@ -178,9 +178,9 @@ const Properties = () => {
                                         value={formData.estado}
                                         onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
                                     >
-                                        <option value="Disponible">Disponible</option>
-                                        <option value="Reservado">Reservado</option>
-                                        <option value="Vendido">Vendido</option>
+                                        <option value="Planos">Planos</option>
+                                        <option value="Construcción">Construcción</option>
+                                        <option value="Terminado">Terminado</option>
                                     </select>
                                 </div>
                             </div>
@@ -229,9 +229,9 @@ const Properties = () => {
                                 <td className="px-6 py-4">{property.moneda === 'USD' ? '$' : 'S/'} {property.valor_venta.$numberDecimal}</td>
                                 <td className="px-6 py-4">{property.moneda || 'PEN'}</td>
                                 <td className="px-6 py-4">
-                                    <span className={`px-2 py-1 rounded-full text-xs ${property.estado === 'Disponible' ? 'bg-green-100 text-green-800' :
-                                            property.estado === 'Reservado' ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-red-100 text-red-800'
+                                    <span className={`px-2 py-1 rounded-full text-xs ${property.estado === 'Planos' ? 'bg-blue-100 text-blue-800' :
+                                            property.estado === 'Construcción' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-green-100 text-green-800'
                                         }`}>
                                         {property.estado}
                                     </span>
@@ -245,7 +245,7 @@ const Properties = () => {
                                     </Button>
                                 </td>
                             </tr>
-                        )))}
+                        ))}
                     </tbody>
                 </table>
             </div>
