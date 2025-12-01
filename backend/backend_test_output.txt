@@ -1,0 +1,39 @@
+(node:7816) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL tests/integration/dashboard.test.js
+  Dashboard API
+    × should return dashboard stats (100 ms)
+    × should return recent simulations (22 ms)
+
+  ● Dashboard API › should return dashboard stats
+
+    expect(received).toHaveProperty(path, value)
+
+    Expected path: "totalClients"
+
+    Expected value: 1
+    Received value: 0
+
+    [0m [90m 46 |[39m
+     [90m 47 |[39m         expect(res[33m.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 48 |[39m         expect(res[33m.[39mbody)[33m.[39mtoHaveProperty([32m'totalClients'[39m[33m,[39m [35m1[39m)[33m;[39m
+     [90m    |[39m                          [31m[1m^[22m[39m
+     [90m 49 |[39m         expect(res[33m.[39mbody)[33m.[39mtoHaveProperty([32m'totalProperties'[39m[33m,[39m [35m1[39m)[33m;[39m
+     [90m 50 |[39m         expect(res[33m.[39mbody)[33m.[39mtoHaveProperty([32m'totalSimulations'[39m[33m,[39m [35m0[39m)[33m;[39m
+     [90m 51 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/integration/dashboard.test.js:48:26)
+
+  ● Dashboard API › should return recent simulations
+
+    ValidationError: Simulation validation failed: user_id: Path `user_id` is required.
+
+      at model.Document.invalidate (node_modules/mongoose/lib/document.js:3219:32)
+      at node_modules/mongoose/lib/document.js:3012:17
+      at node_modules/mongoose/lib/schematype.js:1368:9
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 2 total
+Snapshots:   0 total
+Time:        3.052 s, estimated 4 s
+Ran all test suites matching tests/integration/dashboard.test.js.

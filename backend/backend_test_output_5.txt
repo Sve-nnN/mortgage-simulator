@@ -1,0 +1,34 @@
+(node:20704) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  console.log
+    User count: 0
+
+      at Object.<anonymous> (tests/integration/dashboard.test.js:57:17)
+
+FAIL tests/integration/dashboard.test.js
+  Dashboard API
+    √ should return dashboard stats (62 ms)
+    × should return recent simulations (44 ms)
+
+  ● Dashboard API › should return recent simulations
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 90 |[39m             [33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m [32m`Bearer ${token}`[39m)[33m;[39m
+     [90m 91 |[39m
+    [31m[1m>[22m[39m[90m 92 |[39m         expect(res[33m.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m    |[39m                                [31m[1m^[22m[39m
+     [90m 93 |[39m         expect(res[33m.[39mbody)[33m.[39mtoHaveProperty([32m'recentSimulations'[39m)[33m;[39m
+     [90m 94 |[39m         expect([33mArray[39m[33m.[39misArray(res[33m.[39mbody[33m.[39mrecentSimulations))[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 95 |[39m         expect(res[33m.[39mbody[33m.[39mrecentSimulations[33m.[39mlength)[33m.[39mtoBe([35m1[39m)[33m;[39m[0m
+
+      at Object.<anonymous> (tests/integration/dashboard.test.js:92:32)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 passed, 2 total
+Snapshots:   0 total
+Time:        2.964 s, estimated 4 s
+Ran all test suites matching tests/integration/dashboard.test.js.
