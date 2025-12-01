@@ -13,6 +13,7 @@ const Clients = () => {
     const [clients, setClients] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         dni: '',
         nombres: '',
@@ -28,10 +29,13 @@ const Clients = () => {
 
     const fetchClients = async () => {
         try {
+            setLoading(true);
             const { data } = await api.get('/clients');
             setClients(data);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -208,7 +212,21 @@ const Clients = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                        {clients.map((client) => (
+                        {loading ? (
+                            <tr>
+                                <td colSpan="6" className="px-6 py-8 text-center">
+                                    <div className="flex justify-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : clients.length === 0 ? (
+                            <tr>
+                                <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                                    {t('clients.no_clients')}
+                                </td>
+                            </tr>
+                        ) : clients.map((client) => (
                             <tr key={client._id}>
                                 <td className="px-6 py-4 font-medium">{client.dni}</td>
                                 <td className="px-6 py-4">{client.nombres}</td>
@@ -224,7 +242,7 @@ const Clients = () => {
                                     </Button>
                                 </td>
                             </tr>
-                        ))}
+                        )))}
                     </tbody>
                 </table>
             </div>

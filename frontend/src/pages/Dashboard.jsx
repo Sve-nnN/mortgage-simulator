@@ -14,16 +14,20 @@ const Dashboard = () => {
         recentSimulations: [],
         chartData: []
     });
+    const [loading, setLoading] = useState(true);
     const { t } = useTranslation();
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
+                setLoading(true);
                 const { data } = await api.get('/dashboard/stats');
                 setStats(data);
             } catch (error) {
                 console.error('Error fetching stats:', error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchStats();
@@ -37,6 +41,14 @@ const Dashboard = () => {
             : parseFloat(value);
         return isNaN(num) ? 'S/ 0.00' : `S/ ${num.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`;
     };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-96">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

@@ -13,6 +13,7 @@ const Properties = () => {
     const [properties, setProperties] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         codigo: '',
         direccion: '',
@@ -28,10 +29,13 @@ const Properties = () => {
 
     const fetchProperties = async () => {
         try {
+            setLoading(true);
             const { data } = await api.get('/properties');
             setProperties(data);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -204,7 +208,21 @@ const Properties = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                        {properties.map((property) => (
+                        {loading ? (
+                            <tr>
+                                <td colSpan="6" className="px-6 py-8 text-center">
+                                    <div className="flex justify-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : properties.length === 0 ? (
+                            <tr>
+                                <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                                    {t('properties.no_properties')}
+                                </td>
+                            </tr>
+                        ) : properties.map((property) => (
                             <tr key={property._id}>
                                 <td className="px-6 py-4 font-medium">{property.codigo}</td>
                                 <td className="px-6 py-4">{property.direccion}</td>
@@ -227,7 +245,7 @@ const Properties = () => {
                                     </Button>
                                 </td>
                             </tr>
-                        ))}
+                        )))}
                     </tbody>
                 </table>
             </div>
