@@ -5,6 +5,7 @@ Sistema web completo para la simulación y gestión de créditos hipotecarios, d
 ## Descripción
 
 Aplicación full-stack que permite a instituciones financieras y asesores hipotecarios:
+
 - Gestionar clientes y propiedades
 - Simular créditos hipotecarios con el Sistema Francés
 - Calcular indicadores financieros (TEM, TCEA, TIR, VAN)
@@ -14,11 +15,13 @@ Aplicación full-stack que permite a instituciones financieras y asesores hipote
 ## Características Principales
 
 ### Gestión de Datos
+
 - **CRUD de Clientes**: Registro completo con perfil socioeconómico
 - **CRUD de Propiedades**: Gestión de inmuebles con estados y valores
 - **Historial de Simulaciones**: Almacenamiento y consulta de simulaciones previas
 
 ### Simulación Financiera
+
 - **Sistema Francés de Amortización**: Cuotas constantes durante todo el período
 - **Tasas**: TEA y TNA con conversión automática a TEM
 - **Capitalización**: Mensual y Diaria
@@ -29,18 +32,22 @@ Aplicación full-stack que permite a instituciones financieras y asesores hipote
 - **Monedas**: Soles (PEN) y Dólares (USD)
 
 ### Indicadores Financieros
+
 - **TEM** (Tasa Efectiva Mensual): Tasa mensual efectiva aplicada al crédito
 - **TCEA** (Tasa de Costo Efectivo Anual): Costo real anual del crédito incluyendo todos los costos
 - **TIR** (Tasa Interna de Retorno): Tasa de rendimiento del flujo de caja
 - **VAN** (Valor Actual Neto): Valor presente neto usando COK como tasa de descuento
 
 ### Dashboard y Reportes
+
 - Gráficos de evolución de simulaciones
 - Estadísticas de clientes, propiedades y simulaciones
 - Cronograma detallado de pagos con exportación
 
 ## Stack Tecnológico
+
 ### Backend
+
 - **Runtime**: Node.js 22
 - **Framework**: Express.js
 - **Base de Datos**: MongoDB
@@ -50,6 +57,7 @@ Aplicación full-stack que permite a instituciones financieras y asesores hipote
 - **Testing**: Jest + Supertest
 
 ### Frontend
+
 - **Framework**: React 18
 - **Build Tool**: Vite
 - **Routing**: React Router v6
@@ -60,6 +68,7 @@ Aplicación full-stack que permite a instituciones financieras y asesores hipote
 - **Testing**: Vitest + Testing Library
 
 ### DevOps
+
 - **Containerización**: Docker + Docker Hub
 - **Deployment Backend**: Render
 - **Deployment Frontend**: Vercel
@@ -69,6 +78,7 @@ Aplicación full-stack que permite a instituciones financieras y asesores hipote
 ## Instalación y Configuración
 
 ### Prerrequisitos
+
 - Node.js 22 o superior
 - MongoDB (local o Atlas)
 - Docker y Docker Compose (opcional)
@@ -76,12 +86,14 @@ Aplicación full-stack que permite a instituciones financieras y asesores hipote
 ### Instalación Local
 
 #### 1. Clonar el repositorio
+
 ```bash
 git clone https://github.com/Sve-nnN/mortgage-simulator.git
 cd mortgage-simulator
 ```
 
 #### 2. Configurar Backend
+
 ```bash
 cd backend
 npm install
@@ -91,6 +103,7 @@ cp .env.example .env
 ```
 
 Configurar variables de entorno en `backend/.env`:
+
 ```env
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/mortgage-simulator
@@ -98,6 +111,7 @@ JWT_SECRET=tu_clave_secreta_muy_larga_aqui
 ```
 
 #### 3. Configurar Frontend
+
 ```bash
 cd ../frontend
 npm install
@@ -107,11 +121,13 @@ cp .env.example .env
 ```
 
 Configurar variables de entorno en `frontend/.env`:
+
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
 #### 4. Ejecutar en desarrollo
+
 ```bash
 # Terminal 1 - Backend
 cd backend
@@ -123,6 +139,7 @@ npm run dev
 ```
 
 La aplicación estará disponible en:
+
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:5000
 
@@ -142,6 +159,7 @@ docker-compose down
 ## Variables de entorno recomendadas
 
 ### Backend
+
 - `PORT`: puerto de Express (localmente `5000`; Railway proporciona su propio `PORT`).
 - `MONGO_URI`: cadena de conexión completa a un Mongo externo (Atlas o plugin de Railway); evita `localhost` en producción porque no hay Mongo en Railway.
 - `JWT_SECRET`: clave larga y aleatoria que firma los tokens JWT. Genera una con `openssl rand -hex 32` o con Node (`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`).
@@ -150,15 +168,19 @@ docker-compose down
 Copia `backend/.env.example` antes de arrancar el backend localmente y reemplaza los valores por tus credenciales/fuentes reales.
 
 ### Frontend
+
 - `VITE_API_URL`: URL completa de la API (`https://<backend-service>.up.railway.app/api` en producción o `http://localhost:5000/api` local).
 
 También hay un `frontend/.env.example` para que copies y ajustes estas variables sin subir tus secretos.
 
 ### Configurar JWT Secret
+
 Railway, Render y Docker sólo traen variables: nunca guardes `JWT_SECRET` en el código. Usa un generador seguro y guarda el valor en el panel de variables del servicio o en tu archivo `.env`. Cambia el valor si el token se ha comprometido.
 
 ### Evitar el error `ECONNREFUSED` al desplegar
+
 El log `connect ECONNREFUSED ::1:27017` aparece porque el backend intenta conectarse a `localhost:27017` dentro de Railway y no existe ninguna base de datos allí. En el entorno de producción debes:
+
 1. Agregar el plugin oficial de MongoDB dentro del proyecto Railway o usar un MongoDB Atlas.
 2. Copiar el valor `MongoDB URI` del panel y pegarlo en la variable `MONGO_URI` del backend.
 3. No olvides definir `JWT_SECRET` y `NODE_ENV` junto con la nueva URL; así el backend podrá iniciar sin intentar conectarse a `127.0.0.1`.
@@ -168,6 +190,7 @@ El log `connect ECONNREFUSED ::1:27017` aparece porque el backend intenta conect
 ## Testing
 
 ### Backend
+
 ```bash
 cd backend
 npm test                    # Ejecutar todos los tests
@@ -176,6 +199,7 @@ npm test -- --watch        # Modo watch
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm test                    # Ejecutar todos los tests
@@ -183,18 +207,22 @@ npm test -- --coverage      # Con reporte de cobertura
 ```
 
 ### Cobertura de Tests
+
 Los reportes de cobertura se generan en:
+
 - Backend: `backend/coverage/`
 - Frontend: `frontend/coverage/`
 
 ### Deployment
 
 ### URLs de Producción
+
 - **Frontend**: https://mortgage-simulator-khaki.vercel.app (ya está en Vercel, Railway solo maneja el backend)
 - **Backend**: https://mortgage-simulator-backend-latest.onrender.com
 - **API Base**: https://mortgage-simulator-backend-latest.onrender.com/api
 
 ### Deploy en Render (Backend)
+
 1. Crear cuenta en https://render.com
 2. Conectar repositorio de GitHub
 3. Configurar Web Service:
@@ -204,6 +232,7 @@ Los reportes de cobertura se generan en:
 5. Deploy automático
 
 ### Deploy en Vercel (Frontend)
+
 1. Crear cuenta en https://vercel.com
 2. Importar repositorio de GitHub
 3. Configurar:
@@ -213,22 +242,26 @@ Los reportes de cobertura se generan en:
 5. Deploy automático
 
 Ver guías detalladas:
+
 - [Guía de Deploy en Render](./RENDER_DEPLOYMENT.md)
 - [Guía de Deploy en Vercel](./VERCEL_DEPLOYMENT.md)
 - [Guía de Deploy en Docker Hub](./DOCKER_DEPLOYMENT.md)
 - [Guía de Deploy en Railway](./RAILWAY_DEPLOYMENT.md)
-   _Nota: la guía de Railway solo cubre el backend; la UI ya está alojada en Vercel._
+  _Nota: la guía de Railway solo cubre el backend; la UI ya está alojada en Vercel._
 
 ## Docker imágenes en un registry
+
 1. Construye y etiqueta las imágenes del backend (`./backend`) y frontend (`./frontend`).
 2. Publica los tags en Docker Hub o un registry privado.
 3. Usa esos tags en Railway o cualquier entorno que permita desplegar desde contenedores.
-La guía completa está en [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md).
+   La guía completa está en [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md).
 
 ## Documentación de API
 
 ### Autenticación
+
 Todas las rutas (excepto login/register) requieren token JWT en el header:
+
 ```
 Authorization: Bearer <token>
 ```
@@ -236,27 +269,32 @@ Authorization: Bearer <token>
 ### Endpoints Principales
 
 #### Auth
+
 - `POST /api/auth/register` - Registrar usuario
 - `POST /api/auth/login` - Iniciar sesión
 
 #### Clients
+
 - `GET /api/clients` - Listar clientes
 - `POST /api/clients` - Crear cliente
 - `PUT /api/clients/:id` - Actualizar cliente
 - `DELETE /api/clients/:id` - Eliminar cliente
 
 #### Properties
+
 - `GET /api/properties` - Listar propiedades
 - `POST /api/properties` - Crear propiedad
 - `PUT /api/properties/:id` - Actualizar propiedad
 - `DELETE /api/properties/:id` - Eliminar propiedad
 
 #### Simulations
+
 - `POST /api/simulate/calculate` - Calcular simulación
 - `POST /api/simulate/save` - Guardar simulación
 - `GET /api/simulate/:id` - Obtener simulación
 
 #### Dashboard
+
 - `GET /api/dashboard/stats` - Obtener estadísticas
 
 Ver documentación completa en [API.md](./docs/API.md)
@@ -266,6 +304,7 @@ Ver documentación completa en [API.md](./docs/API.md)
 ### Variables de Entorno
 
 #### Backend (`backend/.env`)
+
 ```env
 # Servidor
 PORT=5000
@@ -281,6 +320,7 @@ NODE_ENV=production
 ```
 
 #### Frontend (`frontend/.env`)
+
 ```env
 # API
 VITE_API_URL=https://tu-backend.onrender.com/api
@@ -289,10 +329,12 @@ VITE_API_URL=https://tu-backend.onrender.com/api
 ## Guía de Uso
 
 ### 1. Registro e Inicio de Sesión
+
 1. Crear cuenta desde `/signup`
 2. Iniciar sesión en `/login`
 
 ### 2. Gestión de Clientes
+
 1. Ir a "Clientes" en el menú
 2. Click en "Agregar Cliente"
 3. Completar formulario con:
@@ -302,6 +344,7 @@ VITE_API_URL=https://tu-backend.onrender.com/api
    - Carga familiar
 
 ### 3. Gestión de Propiedades
+
 1. Ir a "Propiedades"
 2. Click en "Agregar Propiedad"
 3. Completar:
@@ -312,6 +355,7 @@ VITE_API_URL=https://tu-backend.onrender.com/api
    - Estado (Planos/Construcción/Terminado)
 
 ### 4. Simulación de Crédito
+
 1. Ir a "Simulador"
 2. **Paso 1**: Seleccionar cliente y propiedad
 3. **Paso 2**: Configurar parámetros:
@@ -321,31 +365,32 @@ VITE_API_URL=https://tu-backend.onrender.com/api
    - Tipo de gracia (opcional)
    - COK - Costo de Oportunidad (para cálculo de VAN)
    - Bono del Buen Pagador (opcional):
-     * Activar/desactivar
-     * Meses de aplicación
-     * Porcentaje de descuento
+     - Activar/desactivar
+     - Meses de aplicación
+     - Porcentaje de descuento
    - Costos Adicionales (opcional):
-     * Click en "Agregar Costo"
-     * Ingresar nombre del costo
-     * Seleccionar tipo: Monto Fijo o Porcentaje
-     * Si es porcentaje, elegir base: Monto del Préstamo o Valor de la Propiedad
-     * Ingresar valor
-     * Puede agregar múltiples costos
+     - Click en "Agregar Costo"
+     - Ingresar nombre del costo
+     - Seleccionar tipo: Monto Fijo o Porcentaje
+     - Si es porcentaje, elegir base: Monto del Préstamo o Valor de la Propiedad
+     - Ingresar valor
+     - Puede agregar múltiples costos
 4. **Paso 3**: Ver resultados:
    - Indicadores (TEM, TCEA, TIR, VAN)
    - Resumen de Costos Iniciales (si aplica)
    - Cronograma detallado con columnas:
-     * Número de cuota
-     * Fecha
-     * Interés
-     * Amortización
-     * Seguros
-     * Bono (si aplica, mostrado como descuento en verde)
-     * Cuota Total
-     * Saldo Final
+     - Número de cuota
+     - Fecha
+     - Interés
+     - Amortización
+     - Seguros
+     - Bono (si aplica, mostrado como descuento en verde)
+     - Cuota Total
+     - Saldo Final
    - Guardar simulación
 
 ### 5. Dashboard
+
 - Visualizar estadísticas generales
 - Ver gráfico de simulaciones
 - Acceder a simulaciones recientes
@@ -355,28 +400,34 @@ VITE_API_URL=https://tu-backend.onrender.com/api
 ### Conversión de Tasas
 
 **De TEA a TEM:**
+
 ```
 TEM = (1 + TEA)^(1/12) - 1
 ```
 
 **De TNA a TEM (capitalización mensual):**
+
 ```
 TEM = TNA / 12
 ```
 
 **De TNA a TEM (capitalización diaria):**
+
 ```
 j = TNA / 360
 TEM = (1 + j)^30 - 1
 ```
 
 ### Sistema Francés
+
 **Cuota constante:**
+
 ```
 R = P × [i × (1+i)^n] / [(1+i)^n - 1]
 ```
 
 Donde:
+
 - P = Monto del préstamo
 - i = TEM (tasa efectiva mensual)
 - n = Número de cuotas
@@ -384,14 +435,17 @@ Donde:
 ### Período de Gracia
 
 **Gracia Total:**
+
 - Cuota = 0
 - Interés se capitaliza: Saldo_nuevo = Saldo + Interés
 
 **Gracia Parcial:**
+
 - Cuota = Interés del período
 - Saldo permanece constante
 
 ### Bono del Buen Pagador
+
 ```
 Descuento_mensual = Cuota × (Porcentaje_Bono / 100)
 Cuota_Final = Cuota - Descuento_mensual
@@ -400,16 +454,19 @@ Cuota_Final = Cuota - Descuento_mensual
 Aplicable durante los primeros N meses configurados (típicamente 12 meses).
 
 ### TCEA (Tasa de Costo Efectivo Anual)
+
 ```
 TCEA = [(1 + TIR_mensual)^12 - 1] × 100
 ```
 
 ### VAN (Valor Actual Neto)
+
 ```
 VAN = Σ [Flujo_t / (1 + COK_mensual)^t]
 ```
 
 Donde:
+
 - Flujo_0 = Monto_Préstamo - Costos_Iniciales
 - Flujo_1..n = -Cuota_Total de cada mes
 - COK_mensual = (1 + COK_anual)^(1/12) - 1
@@ -419,20 +476,24 @@ Donde:
 El sistema permite agregar costos adicionales de forma dinámica con dos modalidades:
 
 **1. Monto Fijo:**
+
 ```
 Costo = Valor_Fijo
 ```
 
 **2. Porcentaje sobre Base:**
+
 ```
 Costo = Base × (Porcentaje / 100)
 ```
 
 Donde Base puede ser:
+
 - **Monto del Préstamo**: Costos calculados sobre el monto financiado
 - **Valor de la Propiedad**: Costos calculados sobre el valor total del inmueble
 
 **Ejemplos de Costos Adicionales:**
+
 - Gastos notariales: 2% del valor de la propiedad
 - Gastos registrales: 1.5% del valor de la propiedad
 - Tasación: Monto fijo (ej: 500 PEN)
@@ -441,6 +502,7 @@ Donde Base puede ser:
 - Estudio de títulos: Monto fijo (ej: 300 PEN)
 
 **Cálculo Total:**
+
 ```
 Costos_Iniciales_Total = Σ Costos_Fijos + Σ (Base × Porcentaje/100)
 ```
@@ -460,6 +522,5 @@ Estos costos se restan del flujo inicial para el cálculo del VAN y TCEA.
 Este proyecto fue desarrollado como trabajo final del curso de Finanzas e Ingeniería Económica.
 
 ## Autores
+
 - **Juan Carlos Angulo** - [@Sve-nnN](https://github.com/Sve-nnN)
-
-
