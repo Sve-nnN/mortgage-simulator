@@ -20,7 +20,8 @@ app.use(cors({
         'http://localhost:5173',
         'http://localhost:3000',
         'https://mortgage-simulator-khaki.vercel.app',
-        /\.vercel\.app$/
+        /\.vercel\.app$/,
+        /\.railway\.app$/
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

@@ -139,6 +139,32 @@ docker-compose logs -f
 docker-compose down
 ```
 
+## Variables de entorno recomendadas
+
+### Backend
+- `PORT`: puerto de Express (localmente `5000`; Railway proporciona su propio `PORT`).
+- `MONGO_URI`: cadena de conexión completa a un Mongo externo (Atlas o plugin de Railway); evita `localhost` en producción porque no hay Mongo en Railway.
+- `JWT_SECRET`: clave larga y aleatoria que firma los tokens JWT. Genera una con `openssl rand -hex 32` o con Node (`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`).
+- `NODE_ENV`: `production` para habilitar logs y configuraciones específicas.
+
+Copia `backend/.env.example` antes de arrancar el backend localmente y reemplaza los valores por tus credenciales/fuentes reales.
+
+### Frontend
+- `VITE_API_URL`: URL completa de la API (`https://<backend-service>.up.railway.app/api` en producción o `http://localhost:5000/api` local).
+
+También hay un `frontend/.env.example` para que copies y ajustes estas variables sin subir tus secretos.
+
+### Configurar JWT Secret
+Railway, Render y Docker sólo traen variables: nunca guardes `JWT_SECRET` en el código. Usa un generador seguro y guarda el valor en el panel de variables del servicio o en tu archivo `.env`. Cambia el valor si el token se ha comprometido.
+
+### Evitar el error `ECONNREFUSED` al desplegar
+El log `connect ECONNREFUSED ::1:27017` aparece porque el backend intenta conectarse a `localhost:27017` dentro de Railway y no existe ninguna base de datos allí. En el entorno de producción debes:
+1. Agregar el plugin oficial de MongoDB dentro del proyecto Railway o usar un MongoDB Atlas.
+2. Copiar el valor `MongoDB URI` del panel y pegarlo en la variable `MONGO_URI` del backend.
+3. No olvides definir `JWT_SECRET` y `NODE_ENV` junto con la nueva URL; así el backend podrá iniciar sin intentar conectarse a `127.0.0.1`.
+
+## Testing
+
 ## Testing
 
 ### Backend
@@ -161,10 +187,10 @@ Los reportes de cobertura se generan en:
 - Backend: `backend/coverage/`
 - Frontend: `frontend/coverage/`
 
-## Deployment
+### Deployment
 
 ### URLs de Producción
-- **Frontend**: https://mortgage-simulator-khaki.vercel.app
+- **Frontend**: https://mortgage-simulator-khaki.vercel.app (ya está en Vercel, Railway solo maneja el backend)
 - **Backend**: https://mortgage-simulator-backend-latest.onrender.com
 - **API Base**: https://mortgage-simulator-backend-latest.onrender.com/api
 
@@ -190,8 +216,16 @@ Ver guías detalladas:
 - [Guía de Deploy en Render](./RENDER_DEPLOYMENT.md)
 - [Guía de Deploy en Vercel](./VERCEL_DEPLOYMENT.md)
 - [Guía de Deploy en Docker Hub](./DOCKER_DEPLOYMENT.md)
+- [Guía de Deploy en Railway](./RAILWAY_DEPLOYMENT.md)
+   _Nota: la guía de Railway solo cubre el backend; la UI ya está alojada en Vercel._
 
-## 📚 Documentación de API
+## Docker imágenes en un registry
+1. Construye y etiqueta las imágenes del backend (`./backend`) y frontend (`./frontend`).
+2. Publica los tags en Docker Hub o un registry privado.
+3. Usa esos tags en Railway o cualquier entorno que permita desplegar desde contenedores.
+La guía completa está en [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md).
+
+## Documentación de API
 
 ### Autenticación
 Todas las rutas (excepto login/register) requieren token JWT en el header:
