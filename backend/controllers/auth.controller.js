@@ -6,8 +6,8 @@
  * @module controllers/auth.controller
  */
 
-import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
+import User from "../models/User.js";
+import jwt from "jsonwebtoken";
 
 /**
  * Generate JWT token for authenticated user
@@ -18,7 +18,7 @@ import jwt from 'jsonwebtoken';
  */
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
+    expiresIn: "30d",
   });
 };
 
@@ -49,7 +49,7 @@ export const authUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(401).json({ message: 'Invalid username or password' });
+    res.status(401).json({ message: "Invalid username or password" });
   }
 };
 
@@ -74,7 +74,7 @@ export const registerUser = async (req, res) => {
   const userExists = await User.findOne({ username });
 
   if (userExists) {
-    res.status(400).json({ message: 'User already exists' });
+    res.status(400).json({ message: "User already exists" });
     return;
   }
 
@@ -91,6 +91,6 @@ export const registerUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(400).json({ message: 'Invalid user data' });
+    res.status(400).json({ message: "Invalid user data" });
   }
 };
