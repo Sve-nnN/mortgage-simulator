@@ -1,7 +1,7 @@
 /**
  * User Model
  * Defines user schema and authentication methods
- * 
+ *
  * @author Juan Carlos Angulo
  * @module models/User
  */
